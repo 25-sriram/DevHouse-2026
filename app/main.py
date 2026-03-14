@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.database import engine, Base
-from app.routes import webhook, commits
+from app.routes import webhook, commits, analytics
 from app.models import commit  # Import models to ensure they are registered
 
 # Create tables
@@ -13,7 +13,7 @@ app = FastAPI(
 )
 
 # Future modules configuration
-# app.include_router(analytics.router)
+app.include_router(analytics.router)
 # app.include_router(ai_insights.router)
 
 app.include_router(webhook.router)

@@ -25,7 +25,7 @@
 from fastapi import APIRouter, Header, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.services.commit_service import process_github_push
+from app.services.github_processor import process_github_push
 from typing import Optional, Dict, Any
 
 router = APIRouter()

@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.schemas.commit import CommitResponse
-from app.services.commit_service import get_all_commits
+from app.schemas.commit_schema import CommitResponse
+from app.services.github_processor import get_all_commits
 
 router = APIRouter(prefix="/commits", tags=["Commits"])
 
