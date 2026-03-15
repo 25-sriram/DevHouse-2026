@@ -1,24 +1,40 @@
 from fastapi import FastAPI
 from app.database import engine, Base
-from app.routes import webhook, commits, analytics
-from app.models import commit  # Import models to ensure they are registered
+from app.routes import commits, analytics
+from app import webhook_router
+from app.models import commit
+from app.kafka_consumer import start_kafka_consumer
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Create tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Developer Analytics System",
-    description="A modular FastAPI backend that integrates with GitHub webhooks for developer analytics.",
-    version="1.0.0"
+    title="Intelligent Developer Analytics",
+    description="A decoupled event-driven backend using FastAPI and Kafka.",
+    version="1.1.0"
 )
 
-# Future modules configuration
-app.include_router(analytics.router)
-# app.include_router(ai_insights.router)
+# App Lifecycle
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Starting up Developer Analytics System...")
+    # Launch Kafka Consumer in the background
+    try:
+        start_kafka_consumer()
+        logger.info("Kafka Consumer integration initialized.")
+    except Exception as e:
+        logger.error(f"Failed to start Kafka Integration: {e}")
 
-app.include_router(webhook.router)
+# Routes
+app.include_router(analytics.router)
+app.include_router(webhook_router.router)
 app.include_router(commits.router)
 
 @app.get("/")
 def health_check():
-    return {"status": "running"}
+    return {"status": "running", "kafka_integration": "active"}
