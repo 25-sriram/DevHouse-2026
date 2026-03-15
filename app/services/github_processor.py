@@ -54,6 +54,27 @@ def process_github_push(payload: Dict[str, Any], db: Session) -> int:
     normalized_commits, commit_files_map = normalize_push_event(payload)
     new_commits_count = 0
 
+    # Ensure repository is registered in the tracking table
+    from app.models.repository import Repository
+    repo_data = payload.get("repository", {})
+    repo_url = repo_data.get("html_url")
+    owner = repo_data.get("owner", {}).get("name") or repo_data.get("owner", {}).get("login")
+    name = repo_data.get("name")
+    default_branch = repo_data.get("default_branch", "main")
+
+    if repo_url:
+        existing_repo = db.query(Repository).filter(Repository.repo_url == repo_url).first()
+        if not existing_repo:
+            new_repo = Repository(
+                repo_url=repo_url,
+                repo_owner=owner,
+                repo_name=name,
+                default_branch=default_branch
+            )
+            db.add(new_repo)
+            db.flush()
+            logger.info(f"Registered new repository: {name}")
+
     for norm_commit in normalized_commits:
         existing = db.query(Commit).filter(Commit.commit_id == norm_commit.commit_id).first()
         if existing:

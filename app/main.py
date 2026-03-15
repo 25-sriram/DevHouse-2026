@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.database import engine, Base
 from app.routes import commits, analytics
 from app import webhook_router
-from app.models import commit
+from app.models import commit, repository
 from app.kafka_consumer import start_kafka_consumer
 import logging
 
