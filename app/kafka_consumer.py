@@ -32,11 +32,12 @@ def consume_events():
     try:
         consumer = KafkaConsumer(
             TOPIC_NAME,
-            bootstrap_servers=['localhost:9092'],
+            bootstrap_servers=['127.0.0.1:9092'],  # Use IPv4
             auto_offset_reset='earliest',
             enable_auto_commit=True,
-            group_id='github-processor-group',
-            value_deserializer=safe_deserialize
+            group_id='github-processor-group-v4',  # Fresh group ID
+            value_deserializer=safe_deserialize,
+            api_version=(2, 6, 0)
         )
         
         for message in consumer:

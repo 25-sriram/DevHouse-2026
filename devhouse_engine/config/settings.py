@@ -23,7 +23,7 @@ class Settings:
     NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
     NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "devhouse")
     
-    # Repository Configuration
-    REPOS_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "repos"))
+    # Repository Configuration - Moved outside the source tree to avoid Uvicorn reloads
+    REPOS_ROOT = os.path.abspath(os.path.join(os.getcwd(), "..", "devhouse_repos"))
     
 settings = Settings()
